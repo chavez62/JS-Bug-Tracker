@@ -8,30 +8,45 @@ function isAuthenticated(req, res, next) {
   res.redirect("/login");
 }
 
-// Home route
+// Home route with pagination
 router.get("/", isAuthenticated, async (req, res) => {
   const filter = req.query.filter;
-  let bugs = await Bug.find();
+  const page = parseInt(req.query.page) || 1; // Current page number
+  const limit = 10; // Number of items per page
+
+  let query = {};
 
   if (filter) {
     const filterLower = filter.toLowerCase();
-    bugs = bugs.filter(
-      (bug) =>
-        bug.title.toLowerCase().includes(filterLower) ||
-        bug.module.toLowerCase().includes(filterLower) ||
-        bug.description.toLowerCase().includes(filterLower) ||
-        bug.reporter.toLowerCase().includes(filterLower) ||
-        bug.steps.toLowerCase().includes(filterLower) ||
-        bug.expectedBehavior.toLowerCase().includes(filterLower) ||
-        bug.actualBehavior.toLowerCase().includes(filterLower) ||
-        bug.severity.toLowerCase().includes(filterLower) ||
-        bug.status.toLowerCase().includes(filterLower) ||
-        bug.priority.toLowerCase().includes(filterLower) ||
-        (bug.attachment && bug.attachment.toLowerCase().includes(filterLower))
-    );
+    query = {
+      $or: [
+        { title: { $regex: filterLower, $options: "i" } },
+        { module: { $regex: filterLower, $options: "i" } },
+        { description: { $regex: filterLower, $options: "i" } },
+        { reporter: { $regex: filterLower, $options: "i" } },
+        { steps: { $regex: filterLower, $options: "i" } },
+        { expectedBehavior: { $regex: filterLower, $options: "i" } },
+        { actualBehavior: { $regex: filterLower, $options: "i" } },
+        { severity: { $regex: filterLower, $options: "i" } },
+        { status: { $regex: filterLower, $options: "i" } },
+        { priority: { $regex: filterLower, $options: "i" } },
+      ],
+    };
   }
 
-  res.render("index", { bugs });
+  const totalItems = await Bug.countDocuments(query);
+  const totalPages = Math.ceil(totalItems / limit);
+
+  const bugs = await Bug.find(query)
+    .skip((page - 1) * limit)
+    .limit(limit);
+
+  res.render("index", {
+    bugs,
+    currentPage: page,
+    totalPages,
+    filter,
+  });
 });
 
 // Create new bug
