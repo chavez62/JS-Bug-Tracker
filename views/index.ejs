@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+    <title>Bug Tracker</title>
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+    <div class="container mt-5 pt-5">
+      <h1 class="my-4 text-center">
+        Welcome, <% if (user) { %>
+        <span class="username"><%= user.username %></span><span>!</span> <% }
+        else { %> Guest <% } %>
+      </h1>
+      <p class="text-center">Track and manage bugs efficiently.</p>
+
+      <form
+        class="form-inline mb-3 justify-content-center"
+        action="/"
+        method="GET"
+      >
+        <input
+          type="text"
+          class="form-control mr-2"
+          name="filter"
+          id="filter"
+          placeholder="Filter by title or module"
+        />
+        <button type="submit" class="btn btn-primary mr-2">Search</button>
+        <button type="button" class="btn btn-secondary" id="clearBtn">
+          Clear
+        </button>
+      </form>
+      <a href="/create" class="btn btn-success btn-create">Create</a>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th class="sortable" data-column="id" data-order="desc">ID</th>
+              <th class="sortable" data-column="title" data-order="desc">
+                Title
+              </th>
+              <th class="sortable" data-column="module" data-order="desc">
+                Module
+              </th>
+              <th class="sortable" data-column="status" data-order="desc">
+                Status
+              </th>
+              <th class="sortable" data-column="priority" data-order="desc">
+                Priority
+              </th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% bugs.forEach(bug => { %>
+            <tr>
+              <td><%= bug.id %></td>
+              <td><%= bug.title %></td>
+              <td><%= bug.module %></td>
+              <td>
+                <span
+                  class="status-indicator <% if (bug.status === 'Pending') { %> pending <% } else if (bug.status === 'In Progress') { %> in-progress <% } else { %> completed <% } %>"
+                >
+                  <i
+                    class="<% if (bug.status === 'Pending') { %> fas fa-clock <% } else if (bug.status === 'In Progress') { %> fas fa-wrench <% } else { %> fas fa-check <% } %>"
+                  ></i>
+                  <%= bug.status %>
+                </span>
+              </td>
+              <td>
+                <span
+                  class="badge <%= bug.priority === 'High' ? 'badge-danger' : (bug.priority === 'Medium' ? 'badge-secondary' : 'badge-light') %>"
+                >
+                  <%= bug.priority %>
+                </span>
+              </td>
+              <td>
+                <a href="/edit/<%= bug.id %>" class="btn btn-primary btn-sm"
+                  ><i class="fas fa-edit"></i> Update</a
+                >
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  data-toggle="modal"
+                  data-target="#deleteModal<%= bug.id %>"
+                >
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+                <!-- Delete Modal -->
+                <div
+                  class="modal fade"
+                  id="deleteModal<%= bug.id %>"
+                  tabindex="-1"
+                  role="dialog"
+                  aria-labelledby="deleteModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">
+                          Confirm Delete
+                        </h5>
+                        <button
+                          type="button"
+                          class="close"
+                          data-dismiss="modal"
+                          aria-label="Close"
+                        >
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        Are you sure you want to delete this bug?
+                      </div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-dismiss="modal"
+                        >
+                          Cancel
+                        </button>
+                        <form
+                          action="/delete/<%= bug.id %>"
+                          method="POST"
+                          class="d-inline"
+                        >
+                          <button type="submit" class="btn btn-danger">
+                            Delete
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("clearBtn")
+        .addEventListener("click", function () {
+          document.getElementById("filter").value = "";
+          window.location.href = "/";
+        });
+
+      document.querySelectorAll(".sortable").forEach((header) => {
+        header.addEventListener("click", () => {
+          const table = header.closest("table");
+          const tbody = table.querySelector("tbody");
+          const column = header.getAttribute("data-column");
+          const order = header.getAttribute("data-order");
+          const newOrder = order === "desc" ? "asc" : "desc";
+          header.setAttribute("data-order", newOrder);
+
+          const rows = Array.from(tbody.querySelectorAll("tr"));
+          rows.sort((a, b) => {
+            const aText = a
+              .querySelector(`td:nth-child(${header.cellIndex + 1})`)
+              .textContent.trim();
+            const bText = b
+              .querySelector(`td:nth-child(${header.cellIndex + 1})`)
+              .textContent.trim();
+
+            if (!isNaN(aText) && !isNaN(bText)) {
+              return order === "desc" ? bText - aText : aText - bText;
+            }
+
+            return order === "desc"
+              ? bText.localeCompare(aText)
+              : aText.localeCompare(bText);
+          });
+
+          while (tbody.firstChild) {
+            tbody.removeChild(tbody.firstChild);
+          }
+
+          tbody.append(...rows);
+
+          document
+            .querySelectorAll(".sortable")
+            .forEach((th) => th.classList.remove("asc", "desc"));
+          header.classList.add(newOrder);
+        });
+      });
+    </script>
+
+    <%- include('partials/scripts') %>
+  </body>
+</html>

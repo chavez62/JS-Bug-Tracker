@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head') %>
+    <title>Create Bug</title>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    <div class="container mt-5 pt-5">
+        <h1 class="my-4">Create Bug</h1>
+        <form action="/create" method="POST" enctype="multipart/form-data" id="bugForm" novalidate>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" class="form-control" placeholder="Enter bug title" required />
+                    <div class="invalid-feedback">Title is required.</div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="module">Module:</label>
+                    <input type="text" id="module" name="module" class="form-control" placeholder="Enter module name" required />
+                    <div class="invalid-feedback">Module is required.</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" class="form-control" rows="4" placeholder="Enter detailed description" required></textarea>
+                <div class="invalid-feedback">Description is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="reporter">Reporter Name:</label>
+                <input type="text" id="reporter" name="reporter" class="form-control" placeholder="Enter your name" required />
+                <div class="invalid-feedback">Reporter name is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="dateReported">Date Reported:</label>
+                <input type="date" id="dateReported" name="dateReported" class="form-control" required />
+                <div class="invalid-feedback">Date reported is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="steps">Steps to Reproduce:</label>
+                <textarea id="steps" name="steps" class="form-control" rows="3" placeholder="Enter steps to reproduce the bug" required></textarea>
+                <div class="invalid-feedback">Steps to reproduce are required.</div>
+            </div>
+            <div class="form-group">
+                <label for="expectedBehavior">Expected Behavior:</label>
+                <textarea id="expectedBehavior" name="expectedBehavior" class="form-control" rows="2" placeholder="Enter expected behavior" required></textarea>
+                <div class="invalid-feedback">Expected behavior is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="actualBehavior">Actual Behavior:</label>
+                <textarea id="actualBehavior" name="actualBehavior" class="form-control" rows="2" placeholder="Enter actual behavior" required></textarea>
+                <div class="invalid-feedback">Actual behavior is required.</div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="severity">Severity:</label>
+                    <select id="severity" name="severity" class="form-control" required>
+                        <option value="">Select severity</option>
+                        <option value="Critical">Critical</option>
+                        <option value="Major">Major</option>
+                        <option value="Minor">Minor</option>
+                    </select>
+                    <div class="invalid-feedback">Severity is required.</div>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status" class="form-control" required>
+                        <option value="">Select status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                    <div class="invalid-feedback">Status is required.</div>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="priority">Priority:</label>
+                    <select id="priority" name="priority" class="form-control" required>
+                        <option value="">Select priority</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                    <div class="invalid-feedback">Priority is required.</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="attachment">Attachment:</label>
+                <input type="file" id="attachment" name="attachment" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-success">Create</button>
+        </form>
+    </div>
+    <%- include('partials/scripts') %>
+</body>
+</html>

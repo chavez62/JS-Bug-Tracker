@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head') %>
+    <title>Register</title>
+    <style>
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-control {
+            height: 45px;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            border-radius: 5px;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    <div class="container mt-5 pt-5">
+        <h1 class="text-center mb-4">Register</h1>
+        <form action="/register" method="POST" novalidate>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required />
+                <div class="invalid-feedback">Username is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email address:</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required />
+                <div class="invalid-feedback">Email is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required />
+                <div class="invalid-feedback">Password is required.</div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+        </form>
+    </div>
+    <%- include('partials/scripts') %>
+</body>
+</html>
